@@ -1,0 +1,93 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://Scripts/Player/Player.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/Player/PlayerStateMachine.gd" type="Script" id=2]
+[ext_resource path="res://Sprites/CHARACTER 10.png" type="Texture" id=3]
+[ext_resource path="res://Scripts/Player/CamPos.gd" type="Script" id=4]
+[ext_resource path="res://Scenes/WeaponHandling.tscn" type="PackedScene" id=5]
+
+[sub_resource type="Animation" id=1]
+resource_name = "idle"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1.5, 1.5 ),
+"update": 1,
+"values": [ 2, 3 ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "run"
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 6, 5, 4, 8, 7 ]
+}
+
+[sub_resource type="CapsuleShape2D" id=3]
+
+[sub_resource type="CapsuleShape2D" id=4]
+radius = 19.0
+height = 22.0
+
+[node name="Player" type="KinematicBody2D"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="PlayerStateMachine" type="Node2D" parent="."]
+visible = false
+script = ExtResource( 2 )
+run_anim_speed = 3.25
+
+[node name="CharacterSprite" type="Sprite" parent="."]
+position = Vector2( -2, -24 )
+scale = Vector2( 4, 4 )
+texture = ExtResource( 3 )
+hframes = 9
+frame = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="CharacterSprite"]
+autoplay = "idle"
+anims/idle = SubResource( 1 )
+anims/run = SubResource( 2 )
+
+[node name="Collisions" type="CollisionShape2D" parent="."]
+visible = false
+rotation = 1.5708
+shape = SubResource( 3 )
+
+[node name="CamPos" type="Position2D" parent="."]
+script = ExtResource( 4 )
+
+[node name="CameraOffset" type="Position2D" parent="CamPos"]
+
+[node name="Camera2D" type="Camera2D" parent="CamPos/CameraOffset"]
+current = true
+zoom = Vector2( 2, 2 )
+
+[node name="Hitbox" type="Area2D" parent="." groups=[
+"Player_hitbox",
+]]
+visible = false
+
+[node name="HitBox" type="CollisionShape2D" parent="Hitbox"]
+position = Vector2( 2, -20 )
+shape = SubResource( 4 )
+
+[node name="CenterPos" parent="." instance=ExtResource( 5 )]
